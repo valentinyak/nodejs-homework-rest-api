@@ -1,8 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const Contacts = require("../../model/index");
+const Contacts = require("../model/index");
 
-router.get("/", async (req, res, next) => {
+const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await Contacts.listContacts();
 
@@ -10,9 +8,9 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.get("/:contactId", async (req, res, next) => {
+const getContactByID = async (req, res, next) => {
   try {
     const contact = await Contacts.getContactById(req.params.contactId);
 
@@ -28,9 +26,9 @@ router.get("/:contactId", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/", async (req, res, next) => {
+const addContact = async (req, res, next) => {
   try {
     const contact = await Contacts.addContact(req.body);
 
@@ -48,9 +46,9 @@ router.post("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.delete("/:contactId", async (req, res, next) => {
+const deleteContact = async (req, res, next) => {
   const contacts = await Contacts.removeContact(req.params.contactId);
 
   if (contacts) {
@@ -60,9 +58,9 @@ router.delete("/:contactId", async (req, res, next) => {
   } else {
     res.json({ status: "error", code: 404, message: "Not found" }).status(404);
   }
-});
+};
 
-router.patch("/:contactId", async (req, res, next) => {
+const updateContact = async (req, res, next) => {
   if (JSON.stringify(req.body) !== JSON.stringify({})) {
     const contact = await Contacts.updateContact(
       req.params.contactId,
@@ -80,6 +78,12 @@ router.patch("/:contactId", async (req, res, next) => {
       .json({ status: "error", code: 400, message: "missing fields" })
       .status(400);
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  getAllContacts,
+  getContactByID,
+  addContact,
+  deleteContact,
+  updateContact,
+};
