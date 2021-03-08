@@ -9,6 +9,12 @@ router
   .post("/register", userValidation.createUser, userController.registerUser)
   .post("/login", userController.loginUser)
   .post("/logout", guard, userController.logoutUser)
-  .get("/users/current", guard, userController.getCurrentUser);
+  .get("/users/current", guard, userController.getCurrentUser)
+  .patch(
+    "/users",
+    guard,
+    userValidation.updateUser,
+    userController.updateUserSubscription
+  );
 
 module.exports = router;

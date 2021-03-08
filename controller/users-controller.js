@@ -35,7 +35,7 @@ const loginUser = async (req, res, next) => {
     if (user && (await user.validPassword(req.body.password))) {
       const token = jwt.sign({ id: user.id }, SECRET, { expiresIn: "1h" });
 
-      await User.updateTokenToUser(user.id, { token });
+      await User.updateUserToken(user.id, { token });
 
       return res.status(200).json({
         status: "success",
@@ -70,13 +70,9 @@ const logoutUser = async (req, res, next) => {
       });
     }
 
-    await User.updateTokenToUser(user.id, { token: null });
+    await User.updateUserToken(user.id, { token: null });
 
-    return res.status(204).json({
-      status: "success",
-      code: 204,
-      message: "No Content",
-    });
+    return res.status(204).json({});
   } catch (error) {
     next(error);
   }
@@ -104,4 +100,36 @@ const getCurrentUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, getCurrentUser };
+const updateUserSubscription = async (req, res, next) => {
+  try {
+    const user = await User.findUserByID(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Not authorized",
+      });
+    }
+
+    await User.updateUserSubscription(user.id, {
+      subscription: req.body.subscription,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      user: { email: user.email, subscription: req.body.subscription },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  updateUserSubscription,
+};

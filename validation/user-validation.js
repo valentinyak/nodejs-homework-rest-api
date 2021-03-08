@@ -22,7 +22,7 @@ const schemaUpdateUser = Joi.object({
       tlds: { allow: ["com", "net"] },
     })
     .optional(),
-  subscription: Joi.string().optional(),
+  subscription: Joi.string().optional().valid("free", "pro", "premium"),
   password: Joi.string().optional(),
 });
 
